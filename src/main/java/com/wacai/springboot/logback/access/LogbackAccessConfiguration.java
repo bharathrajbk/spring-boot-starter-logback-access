@@ -18,31 +18,26 @@ import java.io.FileNotFoundException;
 @Configuration
 public class LogbackAccessConfiguration {
 
-    @Bean
-    @ConditionalOnProperty(name = "logback.access.config.path")
-    public EmbeddedServletContainerCustomizer containerCustomizer(
-            final @Value("${logback.access.config.path:}") String path) throws FileNotFoundException {
-        final File file = ResourceUtils.getFile(path);
-        return new EmbeddedServletContainerCustomizer() {
+  @Bean
+  public EmbeddedServletContainerCustomizer containerCustomizer() {
 
-            @Override
-            public void customize(ConfigurableEmbeddedServletContainer container) {
-                if (container instanceof TomcatEmbeddedServletContainerFactory) {
-                    ((TomcatEmbeddedServletContainerFactory) container)
-                            .addContextCustomizers(new TomcatContextCustomizer() {
+      return new EmbeddedServletContainerCustomizer() {
 
-                                @Override
-                                public void customize(Context context) {
-                                    LogbackValve logbackValve = new LogbackValve();
-                                    logbackValve.setFilename(file.getAbsolutePath());
-                                    context.getPipeline().addValve(logbackValve);
-                                }
+          @Override
+          public void customize(ConfigurableEmbeddedServletContainer container) {
+              if (container instanceof TomcatEmbeddedServletContainerFactory) {
+                  ((TomcatEmbeddedServletContainerFactory) container)
+                          .addContextCustomizers(new TomcatContextCustomizer() {
 
-                            });
-                }
-            }
-        };
-
-    }
-
+                              @Override
+                              public void customize(Context context) {
+                                  LogbackValve logbackValve = new LogbackValve();
+                                  logbackValve.setFilename("logback-access.xml");
+                                  context.getPipeline().addValve(logbackValve);
+                              }
+                          });
+              }
+          }
+      };
+  }
 }
