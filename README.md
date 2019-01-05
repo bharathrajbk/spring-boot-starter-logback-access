@@ -46,3 +46,10 @@ logback.access.config.path=classpath:logback-access.xml
     
 </configuration>
 ```
+
+# Build Jar
+## Use Maven
+Run - 
+```
+mvn install
+```
